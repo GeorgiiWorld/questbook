@@ -14,13 +14,10 @@ export default function Buddies({ userId, inviteCode }) {
     setSuccess(false)
     const { error } = await addBuddy(code.trim())
     if (error) setError(error)
-    else {
-      setSuccess(true)
-      setCode('')
-    }
+    else { setSuccess(true); setCode('') }
   }
 
-  if (loading) return <p>Загрузка...</p>
+  if (loading) return <div className="empty">Загрузка...</div>
 
   if (selectedBuddy) return (
     <BuddyProfile buddy={selectedBuddy} onBack={() => setSelectedBuddy(null)} />
@@ -28,35 +25,37 @@ export default function Buddies({ userId, inviteCode }) {
 
   return (
     <div>
-      <h2>Мои бадди</h2>
-
-      <div>
-        <p>Твой код приглашения: <strong>{inviteCode}</strong></p>
-        <p>Поделись этим кодом с другом чтобы он добавил тебя</p>
+      <div className="section-header">
+        <span className="section-title">Бадди</span>
       </div>
 
-      <div>
+      <div className="invite-box">
+        <div className="invite-label">Твой код приглашения</div>
+        <div className="invite-code">{inviteCode}</div>
+        <div className="invite-hint">Поделись с другом чтобы играть вместе</div>
+      </div>
+
+      <div className="input-row">
         <input
-          placeholder="Введи код бадди"
+          className="input"
+          placeholder="Код бадди"
           value={code}
           onChange={e => setCode(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleAdd()}
         />
-        <button onClick={handleAdd}>Добавить бадди</button>
-        {error && <p style={{color: 'red'}}>{error}</p>}
-        {success && <p style={{color: 'green'}}>Бадди добавлен!</p>}
+        <button className="btn btn-primary" onClick={handleAdd}>Добавить</button>
       </div>
 
-      {buddies.length === 0 && <p>Пока нет бадди</p>}
+      {error && <p className="error-text" style={{marginBottom: '12px'}}>{error}</p>}
+      {success && <p style={{color: 'var(--quest-light)', fontSize: '13px', marginBottom: '12px', textAlign: 'center'}}>Бадди добавлен!</p>}
+
+      {buddies.length === 0 && <div className="empty">Пока нет бадди</div>}
 
       {buddies.map(buddy => (
-        <div
-          key={buddy.id}
-          onClick={() => setSelectedBuddy(buddy)}
-          style={{border: '1px solid #ccc', padding: '10px', margin: '10px 0', cursor: 'pointer'}}
-        >
-          <h3>👤 {buddy.username}</h3>
-          <p>💰 {buddy.coins} коинов</p>
-          <p style={{color: '#888', fontSize: '14px'}}>Нажми чтобы посмотреть →</p>
+        <div key={buddy.id} className="buddy-card" onClick={() => setSelectedBuddy(buddy)}>
+          <div className="buddy-name">{buddy.username}</div>
+          <div className="buddy-coins">◈ {buddy.coins} коинов</div>
+          <div className="buddy-hint">Нажми чтобы посмотреть профиль →</div>
         </div>
       ))}
     </div>

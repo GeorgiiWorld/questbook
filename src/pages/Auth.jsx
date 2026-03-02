@@ -11,42 +11,48 @@ export default function Auth() {
   const handleSubmit = async () => {
     setLoading(true)
     setError(null)
-
     const { error } = isLogin
       ? await supabase.auth.signInWithPassword({ email, password })
       : await supabase.auth.signUp({ email, password })
-
     if (error) setError(error.message)
     setLoading(false)
   }
 
   return (
-    <div>
-      <h1>QuestBook</h1>
-      <h2>{isLogin ? 'Вход' : 'Регистрация'}</h2>
+    <div className="auth-page">
+      <div className="auth-box">
+        <div className="auth-logo">QuestBook</div>
+        <div className="auth-subtitle">Твоя жизнь — твоя игра</div>
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Пароль"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-      />
+        <div className="auth-form">
+          <input
+            className="input"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+          <input
+            className="input"
+            type="password"
+            placeholder="Пароль"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+          />
+          {error && <p className="error-text">{error}</p>}
+          <button className="btn btn-primary" onClick={handleSubmit} disabled={loading}>
+            {loading ? '...' : isLogin ? 'Войти' : 'Начать игру'}
+          </button>
+        </div>
 
-      {error && <p style={{color: 'red'}}>{error}</p>}
-
-      <button onClick={handleSubmit} disabled={loading}>
-        {loading ? 'Загрузка...' : isLogin ? 'Войти' : 'Зарегистрироваться'}
-      </button>
-
-      <button onClick={() => setIsLogin(!isLogin)}>
-        {isLogin ? 'Нет аккаунта? Регистрация' : 'Уже есть аккаунт? Войти'}
-      </button>
+        <div className="auth-switch">
+          {isLogin ? 'Нет аккаунта? ' : 'Уже есть аккаунт? '}
+          <span onClick={() => setIsLogin(!isLogin)}>
+            {isLogin ? 'Регистрация' : 'Войти'}
+          </span>
+        </div>
+      </div>
     </div>
   )
 }
