@@ -40,5 +40,15 @@ export function useRewards(userId) {
     return { error }
   }
 
-  return { rewards, loading, addReward, deleteReward }
+  const updateReward = async (id, updates) => {
+    const { error } = await supabase
+      .from('rewards')
+      .update(updates)
+      .eq('id', id)
+
+    if (!error) setRewards(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r))
+    return { error }
+  }
+
+  return { rewards, loading, addReward, deleteReward, updateReward }
 }

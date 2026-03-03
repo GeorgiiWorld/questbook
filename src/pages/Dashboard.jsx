@@ -11,8 +11,8 @@ import ViewModal from '../components/ViewModal'
 
 export default function Dashboard({ userId }) {
   const { profile, loading: profileLoading, refetch } = useProfile(userId)
-  const { quests, addQuest, deleteQuest } = useQuests(userId)
-  const { rewards, addReward, deleteReward } = useRewards(userId)
+  const { quests, addQuest, deleteQuest, updateQuest } = useQuests(userId)
+  const { rewards, addReward, deleteReward, updateReward } = useRewards(userId)
   const { logs, addLog } = useLogs(userId)
   const [tab, setTab] = useState('quests')
   const [modal, setModal] = useState(null) // 'quest' | 'reward' | null
@@ -151,6 +151,7 @@ export default function Dashboard({ userId }) {
         item={viewing?.item}
         type={viewing?.type}
         onClose={() => setViewing(null)}
+        onUpdate={viewing?.type === 'quest' ? updateQuest : updateReward}
       />
     </div>
   )

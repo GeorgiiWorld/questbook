@@ -40,5 +40,15 @@ export function useQuests(userId) {
     return { error }
   }
 
-  return { quests, loading, addQuest, deleteQuest }
+  const updateQuest = async (id, updates) => {
+    const { error } = await supabase
+      .from('quests')
+      .update(updates)
+      .eq('id', id)
+
+    if (!error) setQuests(prev => prev.map(q => q.id === id ? { ...q, ...updates } : q))
+    return { error }
+  }
+
+  return { quests, loading, addQuest, deleteQuest, updateQuest }
 }
