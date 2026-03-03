@@ -5,6 +5,9 @@ import { useRewards } from '../hooks/useRewards'
 import { useLogs } from '../hooks/useLogs'
 import { supabase } from '../lib/supabase'
 import Buddies from './Buddies'
+import Modal from '../components/Modal'
+import QuestRewardForm from '../components/QuestRewardForm'
+import ViewModal from '../components/ViewModal'
 
 export default function Dashboard({ userId }) {
   const { profile, loading: profileLoading, refetch } = useProfile(userId)
@@ -12,6 +15,8 @@ export default function Dashboard({ userId }) {
   const { rewards, addReward, deleteReward } = useRewards(userId)
   const { logs, addLog } = useLogs(userId)
   const [tab, setTab] = useState('quests')
+  const [modal, setModal] = useState(null) // 'quest' | 'reward' | null
+  const [viewing, setViewing] = useState(null) // { item, type }
 
   const handleCompleteQuest = async (quest) => {
     await addLog('quest', quest.title, quest.coins)
@@ -65,22 +70,20 @@ export default function Dashboard({ userId }) {
             </div>
             {quests.length === 0 && <div className="empty">Нет квестов — добавь первый</div>}
             {quests.map(quest => (
-              <div key={quest.id} className="card card-quest">
+              <div key={quest.id} className="card card-quest" onClick={() => setViewing({ item: quest, type: 'quest' })}>
                 <div className="card-title">{quest.title}</div>
                 <div className="card-meta">
                   <span className="card-coins">◈ {quest.coins}</span>
-                  <div className="card-actions">
+                  <div className="card-actions" onClick={e => e.stopPropagation()}>
                     <button className="btn btn-complete" onClick={() => handleCompleteQuest(quest)}>Выполнил</button>
                     <button className="btn btn-delete" onClick={() => deleteQuest(quest.id)}>✕</button>
                   </div>
                 </div>
               </div>
             ))}
-            <button className="btn-add" onClick={() => {
-              const title = prompt('Название квеста:')
-              const coins = parseInt(prompt('Коинов за выполнение:'))
-              if (title && coins) addQuest(title, coins)
-            }}>+ Добавить квест</button>
+            <button className="btn-add" onClick={() => setModal('quest')}>
+              + Добавить квест
+            </button>
           </div>
         )}
 
@@ -91,22 +94,20 @@ export default function Dashboard({ userId }) {
             </div>
             {rewards.length === 0 && <div className="empty">Нет наград — добавь что хочешь получить</div>}
             {rewards.map(reward => (
-              <div key={reward.id} className="card card-reward">
+              <div key={reward.id} className="card card-reward" onClick={() => setViewing({ item: reward, type: 'reward' })}>
                 <div className="card-title">{reward.title}</div>
                 <div className="card-meta">
                   <span className="card-coins">◈ {reward.coins}</span>
-                  <div className="card-actions">
+                  <div className="card-actions" onClick={e => e.stopPropagation()}>
                     <button className="btn btn-take" onClick={() => handleTakeReward(reward)}>Взять</button>
                     <button className="btn btn-delete" onClick={() => deleteReward(reward.id)}>✕</button>
                   </div>
                 </div>
               </div>
             ))}
-            <button className="btn-add" onClick={() => {
-              const title = prompt('Название награды:')
-              const coins = parseInt(prompt('Стоимость в коинах:'))
-              if (title && coins) addReward(title, coins)
-            }}>+ Добавить награду</button>
+            <button className="btn-add" onClick={() => setModal('reward')}>
+              + Добавить награду
+            </button>
           </div>
         )}
 
@@ -135,6 +136,22 @@ export default function Dashboard({ userId }) {
           <Buddies userId={userId} inviteCode={profile?.invite_code} />
         )}
       </div>
+      <Modal
+        isOpen={modal !== null}
+        onClose={() => setModal(null)}
+        title={modal === 'quest' ? 'Новый квест' : 'Новая награда'}
+      >
+        <QuestRewardForm
+          type={modal}
+          onSubmit={modal === 'quest' ? addQuest : addReward}
+          onClose={() => setModal(null)}
+        />
+      </Modal>
+      <ViewModal
+        item={viewing?.item}
+        type={viewing?.type}
+        onClose={() => setViewing(null)}
+      />
     </div>
   )
 }

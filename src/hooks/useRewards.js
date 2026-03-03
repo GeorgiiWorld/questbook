@@ -19,10 +19,10 @@ export function useRewards(userId) {
       })
   }, [userId])
 
-  const addReward = async (title, coins) => {
+  const addReward = async (title, coins, description) => {
     const { data, error } = await supabase
       .from('rewards')
-      .insert({ user_id: userId, title, coins })
+      .insert({ user_id: userId, title, coins, description })
       .select()
       .single()
 

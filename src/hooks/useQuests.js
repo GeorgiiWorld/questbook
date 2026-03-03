@@ -19,10 +19,10 @@ export function useQuests(userId) {
       })
   }, [userId])
 
-  const addQuest = async (title, coins) => {
+  const addQuest = async (title, coins, description) => {
     const { data, error } = await supabase
       .from('quests')
-      .insert({ user_id: userId, title, coins })
+      .insert({ user_id: userId, title, coins, description })
       .select()
       .single()
 
