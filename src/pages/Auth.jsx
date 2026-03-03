@@ -22,7 +22,7 @@ export default function Auth() {
     <div className="auth-page">
       <div className="auth-box">
         <div className="auth-logo">QuestBook</div>
-        <div className="auth-subtitle">Твоя жизнь — твоя игра</div>
+        <div className="auth-subtitle">Преврати жизнь в игру</div>
 
         <div className="auth-form">
           <input
