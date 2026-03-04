@@ -111,11 +111,6 @@ html, body, #root {
   text-transform: uppercase;
 }
 
-.nav-btn:hover {
-  color: var(--text);
-  border-color: var(--border);
-}
-
 .nav-btn.active {
   color: var(--gold);
   border-color: var(--gold-dim);
