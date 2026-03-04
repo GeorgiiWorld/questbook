@@ -8,6 +8,7 @@ import Buddies from './Buddies'
 import Modal from '../components/Modal'
 import QuestRewardForm from '../components/QuestRewardForm'
 import ViewModal from '../components/ViewModal'
+import { useSwipe } from '../hooks/useSwipe'
 
 export default function Dashboard({ userId }) {
   const { profile, loading: profileLoading, refetch, setProfile } = useProfile(userId)
@@ -17,6 +18,20 @@ export default function Dashboard({ userId }) {
   const [tab, setTab] = useState('quests')
   const [modal, setModal] = useState(null) // 'quest' | 'reward' | null
   const [viewing, setViewing] = useState(null) // { item, type }
+
+  const tabs = ['quests', 'rewards', 'log', 'buddies']
+
+  const handleSwipeLeft = () => {
+    const currentIndex = tabs.indexOf(tab)
+    if (currentIndex < tabs.length - 1) setTab(tabs[currentIndex + 1])
+  }
+
+  const handleSwipeRight = () => {
+    const currentIndex = tabs.indexOf(tab)
+    if (currentIndex > 0) setTab(tabs[currentIndex - 1])
+  }
+
+  const { onTouchStart, onTouchEnd } = useSwipe(handleSwipeLeft, handleSwipeRight)
 
   const handleCompleteQuest = async (quest) => {
     // Обновляем UI мгновенно
@@ -77,7 +92,7 @@ export default function Dashboard({ userId }) {
         </div>
       </div>
 
-      <div className="content">
+      <div className="content" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         {tab === 'quests' && (
           <div>
             <div className="section-header">
