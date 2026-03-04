@@ -37,6 +37,7 @@ export default function QuestRewardForm({ type, onSubmit, onClose }) {
           value={title}
           onChange={e => setTitle(e.target.value)}
           autoFocus
+          autoComplete="off"
         />
       </div>
 
@@ -45,6 +46,7 @@ export default function QuestRewardForm({ type, onSubmit, onClose }) {
         <input
           className="input"
           type="number"
+          autoComplete="off"
           placeholder="10"
           min="1"
           value={coins}

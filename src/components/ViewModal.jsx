@@ -85,6 +85,7 @@ export default function ViewModal({ item, type, onClose, onUpdate }) {
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 autoFocus
+                autoComplete="off"
               />
             </div>
 
@@ -95,6 +96,7 @@ export default function ViewModal({ item, type, onClose, onUpdate }) {
               <input
                 className="input"
                 type="number"
+                autoComplete="off"
                 min="1"
                 value={coins}
                 onChange={e => setCoins(e.target.value)}
