@@ -10,7 +10,7 @@ import QuestRewardForm from '../components/QuestRewardForm'
 import ViewModal from '../components/ViewModal'
 
 export default function Dashboard({ userId }) {
-  const { profile, loading: profileLoading, refetch } = useProfile(userId)
+  const { profile, loading: profileLoading, refetch, setProfile } = useProfile(userId)
   const { quests, addQuest, deleteQuest, updateQuest } = useQuests(userId)
   const { rewards, addReward, deleteReward, updateReward } = useRewards(userId)
   const { logs, addLog } = useLogs(userId)
@@ -19,9 +19,17 @@ export default function Dashboard({ userId }) {
   const [viewing, setViewing] = useState(null) // { item, type }
 
   const handleCompleteQuest = async (quest) => {
+    // Обновляем UI мгновенно
+    const previousCoins = profile.coins || 0
+    setProfile(prev => ({ ...prev, coins: previousCoins + quest.coins }))
+
     await addLog('quest', quest.title, quest.coins)
-    await supabase.rpc('add_coins', { p_user_id: userId, p_amount: quest.coins })
-    await refetch()
+    const { error } = await supabase.rpc('add_coins', { p_user_id: userId, p_amount: quest.coins })
+
+    if (error) {
+      // Откатываем если ошибка
+      setProfile(prev => ({ ...prev, coins: previousCoins }))
+    }
   }
 
   const handleTakeReward = async (reward) => {
@@ -29,9 +37,16 @@ export default function Dashboard({ userId }) {
       alert('Недостаточно коинов!')
       return
     }
+
+    const previousCoins = profile.coins || 0
+    setProfile(prev => ({ ...prev, coins: previousCoins - reward.coins }))
+
     await addLog('reward', reward.title, -reward.coins)
-    await supabase.rpc('add_coins', { p_user_id: userId, p_amount: -reward.coins })
-    await refetch()
+    const { error } = await supabase.rpc('add_coins', { p_user_id: userId, p_amount: -reward.coins })
+
+    if (error) {
+      setProfile(prev => ({ ...prev, coins: previousCoins }))
+    }
   }
 
   if (profileLoading) return <div className="empty">Загрузка...</div>

@@ -20,5 +20,5 @@ export function useProfile(userId) {
     fetchProfile()
   }, [userId])
 
-  return { profile, loading, refetch: fetchProfile }
+  return { profile, loading, refetch: fetchProfile, setProfile }
 }
