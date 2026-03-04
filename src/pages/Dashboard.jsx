@@ -9,6 +9,8 @@ import Modal from '../components/Modal'
 import QuestRewardForm from '../components/QuestRewardForm'
 import ViewModal from '../components/ViewModal'
 import { useSwipe } from '../hooks/useSwipe'
+import QuestCard from '../components/QuestCard'
+import RewardCard from '../components/RewardCard'
 
 export default function Dashboard({ userId }) {
   const { profile, loading: profileLoading, refetch, setProfile } = useProfile(userId)
@@ -100,16 +102,13 @@ export default function Dashboard({ userId }) {
             </div>
             {quests.length === 0 && <div className="empty">Нет квестов — добавь первый</div>}
             {quests.map(quest => (
-              <div key={quest.id} className="card card-quest" onClick={() => setViewing({ item: quest, type: 'quest' })}>
-                <div className="card-title">{quest.title}</div>
-                <div className="card-meta">
-                  <span className="card-coins">◈ {quest.coins}</span>
-                  <div className="card-actions" onClick={e => e.stopPropagation()}>
-                    <button className="btn btn-complete" onClick={() => handleCompleteQuest(quest)}>Выполнил</button>
-                    <button className="btn btn-delete" onClick={() => deleteQuest(quest.id)}>✕</button>
-                  </div>
-                </div>
-              </div>
+              <QuestCard
+                key={quest.id}
+                quest={quest}
+                onComplete={handleCompleteQuest}
+                onDelete={deleteQuest}
+                onView={(quest) => setViewing({ item: quest, type: 'quest' })}
+              />
             ))}
             <button className="btn-add" onClick={() => setModal('quest')}>
               + Добавить квест
@@ -124,16 +123,13 @@ export default function Dashboard({ userId }) {
             </div>
             {rewards.length === 0 && <div className="empty">Нет наград — добавь что хочешь получить</div>}
             {rewards.map(reward => (
-              <div key={reward.id} className="card card-reward" onClick={() => setViewing({ item: reward, type: 'reward' })}>
-                <div className="card-title">{reward.title}</div>
-                <div className="card-meta">
-                  <span className="card-coins">◈ {reward.coins}</span>
-                  <div className="card-actions" onClick={e => e.stopPropagation()}>
-                    <button className="btn btn-take" onClick={() => handleTakeReward(reward)}>Взять</button>
-                    <button className="btn btn-delete" onClick={() => deleteReward(reward.id)}>✕</button>
-                  </div>
-                </div>
-              </div>
+              <RewardCard
+                key={reward.id}
+                reward={reward}
+                onTake={handleTakeReward}
+                onDelete={deleteReward}
+                onView={(reward) => setViewing({ item: reward, type: 'reward' })}
+              />
             ))}
             <button className="btn-add" onClick={() => setModal('reward')}>
               + Добавить награду
