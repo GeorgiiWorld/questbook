@@ -23,7 +23,11 @@ export function useBuddies(userId) {
       const list = data.map(b => 
         b.user_id === userId ? b.buddy : b.user
       )
-      setBuddies(list)
+      // Дедупликация по ID чтобы один buddy не появился дважды
+      const uniqueBuddies = Array.from(
+        new Map(list.map(buddy => [buddy.id, buddy])).values()
+      )
+      setBuddies(uniqueBuddies)
     }
     setLoading(false)
   }

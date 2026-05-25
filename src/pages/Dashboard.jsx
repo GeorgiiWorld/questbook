@@ -3,6 +3,8 @@ import { useProfile } from '../hooks/useProfile'
 import { useQuests } from '../hooks/useQuests'
 import { useRewards } from '../hooks/useRewards'
 import { useLogs } from '../hooks/useLogs'
+import { useBuddies } from '../hooks/useBuddies'
+import { useNotifications } from '../hooks/useNotifications'
 import { supabase } from '../lib/supabase'
 import Buddies from './Buddies'
 import Modal from '../components/Modal'
@@ -17,6 +19,8 @@ export default function Dashboard({ userId }) {
   const { quests, addQuest, deleteQuest, updateQuest } = useQuests(userId)
   const { rewards, addReward, deleteReward, updateReward } = useRewards(userId)
   const { logs, addLog } = useLogs(userId)
+  const { buddies } = useBuddies(userId)
+  useNotifications(userId, buddies)
   const [tab, setTab] = useState('quests')
   const [modal, setModal] = useState(null) // 'quest' | 'reward' | null
   const [viewing, setViewing] = useState(null) // { item, type }
